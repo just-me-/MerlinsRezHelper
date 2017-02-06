@@ -3,7 +3,6 @@
         <TopLevelControl name="extGroupLeaderFrameRoot" movable="false">
             <Dimensions x="58" y="58" />
             <Anchor point="CENTER" />
-            
             <OnUpdate>
                 extGroupLeaderUpdate()
             </OnUpdate>

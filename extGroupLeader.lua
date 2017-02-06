@@ -1,7 +1,6 @@
-ZO_CreateStringId("SI_BINDING_NAME_SET_GROUP_LEADER", "Set Group Leader")
-
-local LAM = LibStub('LibAddonMenu-1.0')
+local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'EXT_GROUPLEADER_FAKE'
+local AddonVersion = '1.3.1' -- and for LAM version too
 
 local state = {
     Hidden = true,
@@ -85,7 +84,7 @@ local function UpdateReticle()
     if state.Player == nil then return end
     
     if (state.Leader == nil) or 
-       (state.Settings.PvPOnly and state.Player.Zone ~= 'Cyrodiil') or
+       (state.Settings.PvPOnly and not IsInAvAZone()) or
        (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) or 
        (IsUnitGrouped('player') == false) then
         state.Hidden = true
@@ -145,7 +144,8 @@ local function FakeIt(text)
     state.Leader.Name = FAKETAG
     state.Leader.Custom = true
     
-    d("Leader faked.")
+    --d("Leader faked.")
+	ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, GetString(SI_EXTGL_LEADER_FAKED))
 end
 
 function OnSetTargettedLeader()
@@ -155,7 +155,8 @@ end
 -- Slash command for custom follow target ( /glset = set to default group leader - /glset <charname> = set to custom person )
 function SetCustomLeader(text)
     if IsUnitGrouped('player') == false then 
-        d("You must be in a group to set a follow target.")
+        --d("You must be in a group to set a follow target.")
+		ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, GetString(SI_GROUPELECTIONFAILURE8))
         return
     end
     if text == "" then
@@ -163,7 +164,8 @@ function SetCustomLeader(text)
     else
         for xmemberid = 1, GetGroupSize(), 1 do
             if string.lower(text) == string.lower(GetUnitName(GetGroupUnitTagByIndex(xmemberid))) then
-                d("Successfully set '" .. text .. "' as follow target.")
+                --d("Successfully set '" .. text .. "' as follow target.")
+				ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, zo_strformat("<<1>> <<2>> <<3>>", GetString(SI_EXTGL_FOLLOW_TARGET1), text , GetString(SI_EXTGL_FOLLOW_TARGET2)))
                 state.Leader = {
                         Tag = GetGroupUnitTagByIndex(xmemberid)
                 }
@@ -176,7 +178,8 @@ function SetCustomLeader(text)
             end
 		end
 	   if not state.Leader.Custom then
-             d("Could not find anyone named '" .. text .. "' in your group.")
+			--d("Could not find anyone named '" .. text .. "' in your group.")
+			ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, zo_strformat("<<1>> <<2>> <<3>>", GetString(SI_EXTGL_NO_TARGET_FOUND1), text , GetString(SI_EXTGL_NO_TARGET_FOUND2)))
         end
     end
 end
@@ -193,7 +196,8 @@ local function OnPlayerLeft(leftmemberName, reason, wasLocalPlayer)
         end
     end
     if not doesCustomExist then
-        d("Your follow target has left the group. Now following group leader.")
+        --d("Your follow target has left the group. Now following group leader.")
+		ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, GetString(SI_EXTGL_FOLLOW_TARGET_LEFT))
         state.Leader = nil
     end
 end
@@ -226,82 +230,157 @@ local function ChangeColors(value)
 end
 
 local function CreateSettingsMenu()
-    local panelID = LAM:CreateControlPanel('extGroupLeader', 'extGroupLeader')
-    
-    LAM:AddHeader(panelID, 'extGroupLeaderHeader', '|cFFFF22Exterminatus|r Group Leader')
+	local colorYellow = "|cFFFF22"
+	
+	local panelData = {
+		type = "panel",
+		name = "extGroupLeader",
+		displayName = colorYellow.."Exterminatus|r Group Leader",
+		author = "Mitazaki, QuadroTony, Scootworks",
+		version = AddonVersion,
+		slashCommand = "/extGroupLeader",
+		registerForRefresh = true,
+		registerForDefaults = true,
+	}
+	local cntrlOptionsPanel = LAM2:RegisterAddonPanel("extGroupLeader_Options", panelData)
 
-    -- DROPDOWN: Mode
-    LAM:AddDropdown(panelID, 'extGroupLeaderMode', 'Mode', 'The style of the leader reticle.', 
-        EXT_GROUPLEADER.Modes.Plugins,
-        function () return state.Settings.Mode end,
-        ChangeMode,
-        false, '');
-        
-    -- DROPDOWN: Colors
-    LAM:AddDropdown(panelID, 'extGroupLeaderColors', 'Colors', 'The color style of the leader reticle.',
-        EXT_GROUPLEADER.Colors.Plugins,
-        function () return state.Settings.Colors end,
-        ChangeColors,
-        false, '')
-    
-    -- DROPDOWN: Opacity
-    LAM:AddSlider(panelID, 'extGroupLeaderMinOpacity', 'Targetted Opacity', 'The arrows will be this opaque (as a percentage) when you are facing the leader.', 0, 100, 1, 
-            function() return state.Settings.MinAlpha * 100 end,
-            function(value) state.Settings.MinAlpha = value / 100 end,
-        false, '');
-    LAM:AddSlider(panelID, 'extGroupLeaderMaxOpacity', 'Behind Opacity', 'The arrows will be this opaque (as a percentage) when the leader is directly behind you.', 0, 100, 1, 
-            function() return state.Settings.MaxAlpha * 100 end,
-            function(value) state.Settings.MaxAlpha = value / 100 end,
-        false, '')
-    
-    -- DROPDOWN: Size
-    LAM:AddSlider(panelID, 'extGroupLeaderMinSize', 'Targetted Size', 'The arrows will be this size when you are facing the leader.', 0, 64, 2, 
-            function() return state.Settings.MinSize end,
-            function(value) state.Settings.MinSize = value end,
-        false, '');
-    LAM:AddSlider(panelID, 'extGroupLeaderMaxSize', 'Behind Size', 'The arrows will be this size when the leader is directly behind you.', 0, 64, 2, 
-            function() return state.Settings.MaxSize end,
-            function(value) state.Settings.MaxSize = value end,
-        false, '')
-    
-    -- DROPDOWN: Distance
-    LAM:AddSlider(panelID, 'extGroupLeaderMinDistance', 'Targetted Distance', 'The arrows will be this distance from the reticle when you are facing the leader.', 0, 512, 1, 
-            function() return state.Settings.MinDistance end,
-            function(value) state.Settings.MinDistance = value end,
-        false, '');
-    LAM:AddSlider(panelID, 'extGroupLeaderMaxDistance', 'Behind Distance', 'The arrows will be this distance from the reticle when you are facing the leader.', 0, 512, 1, 
-            function() return state.Settings.MaxDistance end,
-            function(value) state.Settings.MaxDistance = value end,
-        false, '')
-    
-    -- CHECKBOX: Only in Cyrodiil
-    LAM:AddCheckbox(panelID, 'extGroupLeaderPvPOnly', 'Only in Cyrodiil', 'Disable the arrows in PvE areas.',
-            function() return state.Settings.PvPOnly end,
-            function() state.Settings.PvPOnly = not state.Settings.PvPOnly end,
-        false, '')
-    
-    -- CHECKBOX: Mimic Reticle
-    LAM:AddCheckbox(panelID, 'extGroupLeaderMimic', 'Mimic Reticle', 'Disable the arrows if the game reticle is not visible.',
-            function() return state.Settings.Mimic end,
-            function() state.Settings.Mimic = not state.Settings.Mimic end,
-        false, '')
-    
-    LAM:AddDescription(panelID, 'extGroupLeaderDistance', '', '|cFFFF22Leader Distance')
-    
-    -- CHECKBOX: Leader Arrow Size
-    LAM:AddCheckbox(panelID, 'extGroupLeaderArrowSize', 'Arrow Size', 'Uses the arrow size to represent the leader distance.',
-            function() return state.Settings.LeaderArrowSize end,
-            function() state.Settings.LeaderArrowSize = not state.Settings.LeaderArrowSize end,
-        false, '')
-    
-    -- CHECKBOX: Leader Arrow Distance
-    LAM:AddCheckbox(panelID, 'extGroupLeaderArrowDistance', 'Arrow Distance', 'Uses the arrow distance to represent the leader distance.',
-            function() return state.Settings.LeaderArrowDistance end,
-            function() state.Settings.LeaderArrowDistance = not state.Settings.LeaderArrowDistance end,
-        false, '')
-    
-    -- DESCRIPTION: Shameless Plug :P
-    LAM:AddDescription(panelID, 'extGroupLeaderAuthors', '|c22FF22[EXT]|r Mitazaki, |c22FF22[EXT]|r Zamalek', '|cFFFF22Contributors')
+	local optionsData = {	
+		[1] = {
+			type = "description",
+			text = colorYellow.."EXTERMINATUS|r GROUP LEADER",
+		},
+		[2] = {
+			type = "dropdown",
+			name = GetString(SI_EXTGL_STYLE_MODE),
+			choices = {"Elastic Reticle Arrows", "Satnav", "Reticle Satnav"},
+			default = "Elastic Reticle Arrows",
+			getFunc = function() return state.Settings.Mode end,
+			setFunc = function(bValue) ChangeMode(bValue) end,
+		},
+		[3] = {
+			type = "dropdown",
+			name = GetString(SI_EXTGL_STYLE_COLOR),
+			tooltip = GetString(SI_EXTGL_STYLE_COLOR_TOOLTIP),
+			choices = EXT_GROUPLEADER.Colors.Plugins,
+			default = "Always White",
+			getFunc = function() return state.Settings.Colors end,
+			setFunc = function(bValue) ChangeColors(bValue) end
+		},
+		[4] = {
+			type = "slider",
+			name = GetString(SI_EXTGL_STYLE_TARGET_OPACITY),
+			tooltip = GetString(SI_EXTGL_STYLE_TARGET_OPACITY_TOOLTIP),
+			min = 0,
+			max = 100,
+			step = 1,
+			default = 50,
+			getFunc = function() return (state.Settings.MinAlpha * 100)  end,
+			setFunc = function(iValue) state.Settings.MinAlpha = (iValue / 100) end,
+		},
+		[5] = {
+			type = "slider",
+			name = GetString(SI_EXTGL_STYLE_BEHIND_OPACITY),
+			tooltip = GetString(SI_EXTGL_STYLE_BEHIND_OPACITY_TOOLTIP),
+			min = 0,
+			max = 100,
+			step = 1,
+			default = 50,
+			getFunc = function() return state.Settings.MaxAlpha * 100 end,
+			setFunc = function(iValue) state.Settings.MaxAlpha = (iValue / 100) end,
+		},
+		[6] = {
+			type = "slider",
+			name = GetString(SI_EXTGL_STYLE_TARGET_SIZE),
+			tooltip = GetString(SI_EXTGL_STYLE_TARGET_SIZE_TOOLTIP),
+			min = 0,
+			max = 64,
+			step = 2,
+			default = 32,
+			getFunc = function() return state.Settings.MinSize end,
+			setFunc = function(iValue) state.Settings.MinSize = iValue end,
+		},
+		[7] = {
+			type = "slider",
+			name = GetString(SI_EXTGL_STYLE_BEHIND_SIZE),
+			tooltip = GetString(SI_EXTGL_STYLE_BEHIND_SIZE_TOOLTIP),
+			min = 0,
+			max = 64,
+			step = 2,
+			default = 48,
+			getFunc = function() return state.Settings.MaxSize end,
+			setFunc = function(iValue) state.Settings.MaxSize = iValue end,
+		},
+		[8] = {
+			type = "slider",
+			name = GetString(SI_EXTGL_STYLE_TARGET_DISTANCE),
+			tooltip = GetString(SI_EXTGL_STYLE_TARGET_DISTANCE_TOOLTIP),
+			min = 0,
+			max = 512,
+			step = 1,
+			default = 256,
+			getFunc = function() return state.Settings.MinDistance end,
+			setFunc = function(iValue) state.Settings.MinDistance = iValue end,
+		},
+		[9] = {
+			type = "slider",
+			name = GetString(SI_EXTGL_STYLE_BEHIND_DISTANCE),
+			tooltip = GetString(SI_EXTGL_STYLE_BEHIND_DISTANCE_TOOLTIP),
+			min = 0,
+			max = 512,
+			step = 1,
+			default = 256,
+			getFunc = function() return state.Settings.MaxDistance end,
+			setFunc = function(iValue) state.Settings.MaxDistance = iValue end,
+		},
+		[10] = {
+			type = "checkbox",
+			name = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL),
+			tooltip = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL_TOOLTIP),
+			default = true,
+			getFunc = function() return state.Settings.PvPOnly  end,
+			setFunc = function(bValue) state.Settings.PvPOnly = bValue end
+		},	
+		[11] = {
+			type = "checkbox",
+			name = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE),
+			tooltip = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE_TOOLTIP),
+			default = false,
+			getFunc = function() return state.Settings.Mimic end,
+			setFunc = function(bValue) state.Settings.Mimic = bValue end
+		},	
+		[12] = {
+			type = "description",
+			text = colorYellow..GetString(SI_EXTGL_STYLE_LEADER_DISTANCE),
+		},
+		[13] = {
+			type = "checkbox",
+			name = GetString(SI_EXTGL_STYLE_ARROW_SIZE),
+			tooltip = GetString(SI_EXTGL_STYLE_ARROW_SIZE_TOOLTIP),
+			default = true,
+			getFunc = function() return state.Settings.LeaderArrowSize end,
+			setFunc = function(bValue) state.Settings.LeaderArrowSize = bValue end
+		},	
+		---[[
+		[14] = {
+			type = "checkbox",
+			name = GetString(SI_EXTGL_STYLE_ARROW_DISTANCE),
+			tooltip = GetString(SI_EXTGL_STYLE_ARROW_DISTANCE_TOOLTIP),
+			default = true,
+			getFunc = function() return state.Settings.LeaderArrowDistance end,
+			setFunc = function(bValue) state.Settings.LeaderArrowDistance = bValue end
+		},	
+		[15] = {
+			type = "description",
+			text = colorYellow.. GetString(SI_EXTGL_SETTING_CONTRIBUTORS),
+		},
+		[16] = {
+			type = "description",
+			text = "|c22FF22[EXT]|r Mitazaki, |c22FF22[EXT]|r Zamalek, |cCD0000[Wabbajack]|r Scootworks",
+		},
+		--]]
+	}		
+	
+	LAM2:RegisterOptionControls("extGroupLeader_Options", optionsData)
 end
 
 local function OnPluginLoaded(event, addon)

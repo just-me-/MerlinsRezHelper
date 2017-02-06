@@ -1,6 +1,6 @@
 <Bindings>
-  <Layer name="General">
-    <Category name="Targeting">
+  <Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
+    <Category name="SI_KEYBINDINGS_CATEGORY_TARGETING">
       <Action name="SET_GROUP_LEADER">
         <Down>OnSetTargettedLeader() return true</Down>
       </Action>
