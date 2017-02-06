@@ -1,14 +1,14 @@
 -- Meldungen
-SafeAddString(SI_BINDING_NAME_SET_GROUP_LEADER , "Markiere als Gruppenleiter");
+SafeAddString(SI_BINDING_NAME_SET_GROUP_LEADER , "Markiere als Wiederbelebungs-Ziel");
 
 SafeAddString(SI_EXTGL_FOLLOW_TARGET1 , "Erfolgreich ");
-SafeAddString(SI_EXTGL_FOLLOW_TARGET2 , "als Gruppenleiter definiert.");
+SafeAddString(SI_EXTGL_FOLLOW_TARGET2 , "als Wiederbelebungs-Ziel definiert.");
 
 SafeAddString(SI_EXTGL_NO_TARGET_FOUND1 , "Konnte ");
 SafeAddString(SI_EXTGL_NO_TARGET_FOUND2 , " nicht in dieser Gruppe auffinden.");
 
-SafeAddString(SI_EXTGL_FOLLOW_TARGET_LEFT , "Dein Ziel hat die Gruppe verlassen. Folge dem neuen Gruppenleiter.");
-SafeAddString(SI_EXTGL_LEADER_FAKED , "Leiter gefälscht");
+SafeAddString(SI_EXTGL_FOLLOW_TARGET_LEFT , "Dein Ziel hat die Gruppe verlassen. Folge dem neuen Wiederbelebungs-Ziel.");
+SafeAddString(SI_EXTGL_LEADER_FAKED , "Wiederbelebungs-Ziel gefälscht");
 
 -- Farben
 SafeAddString(SI_EXTGL_COLORS_GREEN_ORANGE_RED , "Grün Orange Rot");
@@ -45,7 +45,7 @@ SafeAddString(SI_EXTGL_SETTING_ONLY_CYRODIIL_TOOLTIP , "Deaktiviert die Pfeile i
 SafeAddString(SI_EXTGL_SETTING_MIMIC_RETICLE , "nur wenn Fadenkreuz aktiv");
 SafeAddString(SI_EXTGL_SETTING_MIMIC_RETICLE_TOOLTIP , "Zeigt die Pfeile des Zieles nur, wenn das ESO Fadenkreuz aktiv ist.");
 
-SafeAddString(SI_EXTGL_STYLE_LEADER_DISTANCE , "Gruppenleiter Distanz");
+SafeAddString(SI_EXTGL_STYLE_LEADER_DISTANCE , "Wiederbelebungs-Ziel Distanz");
 
 SafeAddString(SI_EXTGL_STYLE_ARROW_SIZE , "Pfeilgrösse");
 SafeAddString(SI_EXTGL_STYLE_ARROW_SIZE_TOOLTIP , "Benutzt die Pfeilgrösse als Anzeigeelement der Zieldistanz.");
@@ -54,4 +54,10 @@ SafeAddString(SI_EXTGL_STYLE_ARROW_DISTANCE , "Pfeildistanz");
 SafeAddString(SI_EXTGL_STYLE_ARROW_DISTANCE_TOOLTIP , "Benutzt die Pfeildistanz als Anzeigeelement der Zieldistanz");
 
 SafeAddString(SI_EXTGL_SETTING_CONTRIBUTORS , "Mitwirkende|r");
+
+SafeAddString(SI_EXTGL_STYLE_SOUND , "Sound Effekt");
+
+SafeAddString(SI_EXTGL_STYLE_DEBUG , "Einstellungs- und Debugmodus");
+SafeAddString(SI_EXTGL_STYLE_DEBUG_TOOLTIP , "Nützlich für die Pfeileinstellungen. (nur in einer Gruppe)");
+
 

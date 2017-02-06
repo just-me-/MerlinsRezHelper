@@ -1,6 +1,7 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'EXT_GROUPLEADER_FAKE'
-local AddonVersion = '1.3.1' -- and for LAM version too
+local AddonVersion = '1.4.0' -- and for LAM version too
+local NextPlayer = ''
 
 local state = {
     Hidden = true,
@@ -30,19 +31,22 @@ local state = {
 }
 
 local defaultSettings = {
-    Mode = 'Elastic Reticle Arrows',
-    Colors = 'White Orange Red',
-    MinAlpha = 0.3,
+    Mode = 'Satnav',
+    Colors = 'Green Orange Red',
+    MinAlpha = 0.5,
     MaxAlpha = 0.9,
-    MinSize = 24,
-    MaxSize = 32,
+    MinSize = 50,
+    MaxSize = 60,
     MinDistance = 0,
     MaxDistance = 128,
-    PvPOnly = true,
-    Mimic = false,
+    PvPOnly = false,
+    Mimic = true,
+	
+	Debug = false, 
+	Sound = 'DUEL_WON',
     
     LeaderArrowSize = false,
-    LeaderArrowDistance = false,
+    LeaderArrowDistance = true,
     LeaderArrowNumeric = false
 }
 
@@ -87,9 +91,9 @@ local function UpdateReticle()
        (state.Settings.PvPOnly and not IsInAvAZone()) or
        (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) or 
        (IsUnitGrouped('player') == false) then
-        state.Hidden = true
+        -- state.Hidden = true
     else
-        state.Hidden = false
+        -- state.Hidden = false
         
         state.DX = state.Player.X - state.Leader.X
         state.DY = state.Player.Y - state.Leader.Y
@@ -119,8 +123,12 @@ end
 
 -- **************** EVENTS ****************
 
+-- onUpdate trigger
 function extGroupLeaderUpdate()
     if state.Player == nil then return end
+	
+	-- 2Do check for nearest group member and et "as leader"
+	GetClosestMember()
     
     UpdatePlayerEntity(state.Player)
     local h = NormalizeAngle(GetPlayerCameraHeading())
@@ -133,6 +141,80 @@ function extGroupLeaderUpdate()
     if state.Leader == nil or state.Leader.Name == state.Player.Name then state.Leader = nil end
     
     UpdateReticle()
+end
+
+function GetClosestMember()
+
+	local currentTag
+	local currentName
+	local currentDistance
+	local closestPlayer = ''
+	local someoneIsDead = false
+	local closestDistance = 1000000
+		
+	-- if in group
+	if IsUnitGrouped('player') == true then 
+	
+		-- foreach groupmember
+		
+		for xmemberid = 1, GetGroupSize(), 1 do
+		
+            currentTag = GetGroupUnitTagByIndex(xmemberid)
+            currentName = GetUnitName(currentTag)
+		
+			-- if death
+			if ((IsUnitDead(currentTag) and 
+				IsUnitBeingResurrected(currentTag)==false and 
+				DoesUnitHaveResurrectPending(currentTag)==false and 
+				IsUnitReincarnating(currentTag)==false and 
+				(GetUnitName("player") ~= GetUnitName(currentTag))
+				) or state.Settings.Debug == true 
+				) then
+				someoneIsDead = true
+		
+				-- get position
+				currentDistance = CalcDistance(currentTag);
+		
+				-- override if its closer 
+				if currentDistance ~= nil and currentDistance ~= 0 then
+					if currentDistance<closestDistance then
+						closestPlayer = currentName
+						closestDistance = currentDistance
+					end
+				end
+				
+			end
+		end
+		
+		if someoneIsDead then
+			state.Hidden = false
+		else
+			state.Hidden = true
+		end
+		
+		if (closestPlayer ~= '') and (NextPlayer ~= closestPlayer) then
+			NextPlayer = closestPlayer
+			SetCustomLeader(closestPlayer)
+		end
+		
+		-- hide if mouse shown / on menu interface 
+		if (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) then
+			state.Hidden = true
+		end
+
+	end
+
+end
+
+function CalcDistance(memberTag)
+
+	playerX, playerY, playerZ = GetMapPlayerPosition('player')
+	memberX, memberY, memberZ = GetMapPlayerPosition(memberTag)
+	calcDX = playerX - memberX
+	calcDY = playerY - memberY
+
+	return math.sqrt((calcDX * calcDX) + (calcDY * calcDY))
+
 end
 
 local function FakeIt(text)
@@ -165,7 +247,7 @@ function SetCustomLeader(text)
         for xmemberid = 1, GetGroupSize(), 1 do
             if string.lower(text) == string.lower(GetUnitName(GetGroupUnitTagByIndex(xmemberid))) then
                 --d("Successfully set '" .. text .. "' as follow target.")
-				ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, zo_strformat("<<1>> <<2>> <<3>>", GetString(SI_EXTGL_FOLLOW_TARGET1), text , GetString(SI_EXTGL_FOLLOW_TARGET2)))
+				ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS[state.Settings.Sound], zo_strformat("<<1>> <<2>> <<3>>", GetString(SI_EXTGL_FOLLOW_TARGET1), text , GetString(SI_EXTGL_FOLLOW_TARGET2)))
                 state.Leader = {
                         Tag = GetGroupUnitTagByIndex(xmemberid)
                 }
@@ -229,14 +311,21 @@ local function ChangeColors(value)
     state.Colors.Init()
 end
 
+--local function ChangeSound(value)
+--    state.Settings.Sound = value
+--    if state.Sound then state.Sound:Unit() end
+--    state.Sound = EXT_GROUPLEADER.Sound[value]
+--    state.Sound.Init()
+--end
+
 local function CreateSettingsMenu()
 	local colorYellow = "|cFFFF22"
 	
 	local panelData = {
 		type = "panel",
-		name = "extGroupLeader",
-		displayName = colorYellow.."Exterminatus|r Group Leader",
-		author = "Mitazaki, QuadroTony, Scootworks",
+		name = "Merlins Rez Helper",
+		displayName = colorYellow.."Merlins|r Rez Helper",
+		author = "@Just_Merlin",
 		version = AddonVersion,
 		slashCommand = "/extGroupLeader",
 		registerForRefresh = true,
@@ -247,7 +336,7 @@ local function CreateSettingsMenu()
 	local optionsData = {	
 		[1] = {
 			type = "description",
-			text = colorYellow.."EXTERMINATUS|r GROUP LEADER",
+			text = colorYellow.."Merlins|r Rez Helper",
 		},
 		[2] = {
 			type = "dropdown",
@@ -333,21 +422,42 @@ local function CreateSettingsMenu()
 			setFunc = function(iValue) state.Settings.MaxDistance = iValue end,
 		},
 		[10] = {
-			type = "checkbox",
-			name = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL),
-			tooltip = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL_TOOLTIP),
-			default = true,
-			getFunc = function() return state.Settings.PvPOnly  end,
-			setFunc = function(bValue) state.Settings.PvPOnly = bValue end
-		},	
+			type = "dropdown",
+			name = GetString(SI_EXTGL_STYLE_SOUND),
+			choices = {"NONE", "DUEL_WON", "ELDER_SCROLL_CAPTURED_BY_ALDMERI", "SKILL_XP_DARK_ANCHOR_CLOSED", "VOICE_CHAT_MENU_CHANNEL_JOINED"},
+			default = "DUEL_WON",
+			getFunc = function() return state.Settings.Sound end,
+			setFunc = function(selected)
+					state.Settings.Sound = selected
+					PlaySound(SOUNDS[selected])
+				end,
+		},
 		[11] = {
 			type = "checkbox",
-			name = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE),
-			tooltip = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE_TOOLTIP),
+			name = GetString(SI_EXTGL_STYLE_DEBUG),
+			tooltip = GetString(SI_EXTGL_STYLE_DEBUG_TOOLTIP),
 			default = false,
-			getFunc = function() return state.Settings.Mimic end,
-			setFunc = function(bValue) state.Settings.Mimic = bValue end
-		},	
+			getFunc = function() return state.Settings.Debug end,
+			setFunc = function(bValue) state.Settings.Debug = bValue end
+		},
+	
+		--[10] = {
+		--	type = "checkbox",
+		--	name = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL),
+		--	tooltip = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL_TOOLTIP),
+		--	default = true,
+		--	getFunc = function() return state.Settings.PvPOnly  end,
+		--	setFunc = function(bValue) state.Settings.PvPOnly = bValue end
+		-- },	
+		--[11] = {
+		--	type = "checkbox",
+		--	name = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE),
+		--	tooltip = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE_TOOLTIP),
+		--	default = false,
+		--	getFunc = function() return state.Settings.Mimic end,
+		--	setFunc = function(bValue) state.Settings.Mimic = bValue end
+		--},
+		
 		[12] = {
 			type = "description",
 			text = colorYellow..GetString(SI_EXTGL_STYLE_LEADER_DISTANCE),
@@ -369,14 +479,6 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.LeaderArrowDistance end,
 			setFunc = function(bValue) state.Settings.LeaderArrowDistance = bValue end
 		},	
-		[15] = {
-			type = "description",
-			text = colorYellow.. GetString(SI_EXTGL_SETTING_CONTRIBUTORS),
-		},
-		[16] = {
-			type = "description",
-			text = "|c22FF22[EXT]|r Mitazaki, |c22FF22[EXT]|r Zamalek, |cCD0000[Wabbajack]|r Scootworks",
-		},
 		--]]
 	}		
 	
@@ -391,12 +493,16 @@ local function OnPluginLoaded(event, addon)
     
     ChangeMode(state.Settings.Mode)
     ChangeColors(state.Settings.Colors)
+    ---ChangeSound(state.Settings.Sound)
         
     InitializePlugin()
     
-    SLASH_COMMANDS["/glfake"] = FakeIt
-    SLASH_COMMANDS["/glset"] = SetCustomLeader
+    -- SLASH_COMMANDS["/glfake"] = FakeIt
+    -- SLASH_COMMANDS["/glset"] = SetCustomLeader
 end
+
+
 
 EVENT_MANAGER:RegisterForEvent("extGroupLeader", EVENT_ADD_ON_LOADED, OnPluginLoaded)
 EVENT_MANAGER:RegisterForEvent("extGroupLeader", EVENT_GROUP_MEMBER_LEFT, OnPlayerLeft)
+    
