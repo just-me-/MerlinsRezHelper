@@ -1,9 +1,9 @@
 local LIB = "White Orange Red"
-local wor = EXT_GROUPLEADER.Colors[LIB]
+local wor = MERLINS_REZHELPER.Colors[LIB]
 
 if not wor then
     
-    wor = EXT_GROUPLEADER.Colors:Register(LIB)
+    wor = MERLINS_REZHELPER.Colors:Register(LIB)
     
     function wor:Init()
         

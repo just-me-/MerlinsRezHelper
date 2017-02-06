@@ -1,20 +1,20 @@
 local LIB = 'UI'
-local FRAMENAMEPREFIX = 'extGroupLeaderFrame'
-local TEXTUREPATHPREFIX = 'extGroupLeader/textures/'
-local ui = EXT_GROUPLEADER[LIB]
+local FRAMENAMEPREFIX = 'merlinsRezHelperFrame'
+local TEXTUREPATHPREFIX = 'merlinsRezHelper/textures/'
+local ui = MERLINS_REZHELPER[LIB]
 
 if not ui then
-   
+
     ui = ui or {}
-    EXT_GROUPLEADER[LIB] = ui
-    
+    MERLINS_REZHELPER[LIB] = ui
+
     ui.TextureFrames = ui.TextureFrames or {}
-    
+
     -- ******* CLASS TextureFrame *******
-    
-    local TextureFrame = EXT_GROUPLEADER.Class(function(frame, name)
+
+    local TextureFrame = MERLINS_REZHELPER.Class(function(frame, name)
         frame.Name = name
-        frame.SystemFrame = WINDOW_MANAGER:CreateControl(name, extGroupLeaderFrameRoot, CT_TEXTURE)
+        frame.SystemFrame = WINDOW_MANAGER:CreateControl(name, merlinsRezHelperFrameRoot, CT_TEXTURE)
         frame.Color = { R = 1, G = 1, B = 1, A = 1 }
         frame.TextureRotation = 0
         frame.TextureRotationX = 0
@@ -24,14 +24,14 @@ if not ui then
         frame.Width = 0
         frame.Height = 0
     end)
-    
+
     function TextureFrame:SetAlpha(value, f)
         if self.Color.A ~= value then
             self.Color.A = value
             self.SystemFrame:SetColor(self.Color.R, self.Color.G, self.Color.B, value)
         end
     end
-    
+
     function TextureFrame:SetColor(r, g, b)
         if not g and type(r) == 'table' then
             g = r.G
@@ -45,7 +45,7 @@ if not ui then
             self.SystemFrame:SetColor(r, g, b, self.Color.A)
         end
     end
-    
+
     function TextureFrame:SetTextureCoords(left, right, top, bottom)
         if not self.TextureCoords then
             self.TextureCoords = { left, right, top, bottom }
@@ -59,7 +59,7 @@ if not ui then
             self.SystemFrame:SetTextureCoords(left, right, top, bottom)
         end
     end
-    
+
     function TextureFrame:SetTextureRotation(value, x, y)
         if x == nil then x = 0.5 end
         if y == nil then y = 0.5 end
@@ -71,7 +71,7 @@ if not ui then
             self.SystemFrame:SetTextureRotation(value, x, y)
         end
     end
-    
+
     function TextureFrame:SetTexture(value)
         if self.Texture ~= value then
             self.Texture = value
@@ -82,14 +82,14 @@ if not ui then
             end
         end
     end
-        
+
     function TextureFrame:SetMovable(value)
         if self.Movable ~= value then
             self.Movable = value
             self.SystemFrame:SetMovable(value)
         end
     end
-            
+
     function TextureFrame:SetDimensions(width, height)
         if not height then height = width end
         if self.Width ~= width or self.Height ~= height then
@@ -98,7 +98,7 @@ if not ui then
             self.SystemFrame:SetDimensions(width, height)
         end
     end
-            
+
     function TextureFrame:SetAnchor(parent, child, x, y)
         if not self.Anchor then self.Anchor = {} end
         if self.Anchor.Parent ~= parent or self.Anchor.Child ~= child or
@@ -108,10 +108,10 @@ if not ui then
             self.Anchor.X = x
             self.Anchor.Y = y
             self.SystemFrame:ClearAnchors()
-            self.SystemFrame:SetAnchor(parent, extGroupLeaderFrameRoot, child, x, y)
+            self.SystemFrame:SetAnchor(parent, merlinsRezHelperFrameRoot, child, x, y)
         end
     end
-    
+
     function TextureFrame:Reset()
         self:SetAlpha(0)
         self:SetTextureCoords(0, 1, 0, 1)
@@ -120,9 +120,9 @@ if not ui then
         self:SetDimensions(0, 0)
         self:SetColor(1, 1, 1)
     end
-    
-    -- ******* UI *******   
-            
+
+    -- ******* UI *******
+
     function ui:RequestTextureFrames(frames)
         local init
         for i,v in ipairs(frames) do
@@ -142,5 +142,5 @@ if not ui then
         end
         return unpack(self.TextureFrames)
     end
-    
+
 end

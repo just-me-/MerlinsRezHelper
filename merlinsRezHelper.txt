@@ -1,9 +1,9 @@
-## Title: |c42cbf4Merlins Rez Helper|r
+## Title: |c42cbf4Merlins Rez Helper 2|r
 ## APIVersion: 100017
-## Version: 1.4.0
+## Version: 1.4.1
 ## Author: @Just_Merlin
 ## OptionalDependsOn: LibAddonMenu-2.0
-## SavedVariables: extGroupLeaderSettings
+## SavedVariables: merlinsRezHelperSettings
 
 lib\LibStub\LibStub.lua
 
@@ -24,7 +24,7 @@ lib\LibAddonMenu-2.0\controls\texture.lua
 lang/en.lua
 lang/$(language).lua
 
-extGroupLeader.lib.lua
+merlinsRezHelper.lib.lua
 ui\ui.lib.lua
 modes\modes.lib.lua
 colors\colors.lib.lua
@@ -36,6 +36,6 @@ colors\white.lua
 colors\white-orange-red.lua
 colors\green-orange-red.lua
 
-extGroupLeader.lua
-extGroupLeader.xml
+merlinsRezHelper.lua
+merlinsRezHelper.xml
 Bindings.xml

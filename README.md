@@ -1,7 +1,7 @@
-eso-extGroupLeader
+eso-merlinsRezHelper
 ==================
 
-extGroupLeader is a plugin for Elder Scrolls Online that allows you to track your group leader.
+merlinsRezHelper is a plugin for Elder Scrolls Online that allows you to track your group leader.
 
 Settings
 --------
@@ -62,7 +62,7 @@ Contributing: Getting started
 Contributing: License
 ---------------------
 
-eso-extGroupLeader uses the BSD 2-clause license, which can be found in LICENSE.txt.
+eso-merlinsRezHelper uses the BSD 2-clause license, which can be found in LICENSE.txt.
 
 **Additional Restrictions**
 

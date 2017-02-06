@@ -1,12 +1,12 @@
 local LIB = "Modes"
-local Modes = EXT_GROUPLEADER[LIB]
+local Modes = MERLINS_REZHELPER[LIB]
 
 if not Modes then
    
     Modes = Modes or {
         Plugins = {}
     }
-    EXT_GROUPLEADER[LIB] = Modes
+    MERLINS_REZHELPER[LIB] = Modes
     
     function Modes:Register(name)
         table.insert(Modes.Plugins, name)

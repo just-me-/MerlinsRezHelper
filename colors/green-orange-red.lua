@@ -1,9 +1,9 @@
 local LIB = "Green Orange Red"
-local gor = EXT_GROUPLEADER.Colors[LIB]
+local gor = MERLINS_REZHELPER.Colors[LIB]
 
 if not gor then
     
-    gor = EXT_GROUPLEADER.Colors:Register(LIB)
+    gor = MERLINS_REZHELPER.Colors:Register(LIB)
     
     local function Hue2Rgb(p, q, t)
         if t < 0   then t = t + 1 end

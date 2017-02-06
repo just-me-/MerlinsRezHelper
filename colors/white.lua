@@ -1,9 +1,9 @@
 local LIB = "Always White"
-local white = EXT_GROUPLEADER.Colors[LIB]
+local white = MERLINS_REZHELPER.Colors[LIB]
 
 if not white then
     
-    white = EXT_GROUPLEADER.Colors:Register(LIB)
+    white = MERLINS_REZHELPER.Colors:Register(LIB)
     
     function white:Init()
         

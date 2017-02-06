@@ -1,30 +1,30 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
-local FAKETAG = 'EXT_GROUPLEADER_FAKE'
-local AddonVersion = '1.4.0' -- and for LAM version too
+local FAKETAG = 'MERLINS_REZHELPER_FAKE'
+local AddonVersion = '1.4.1' -- and for LAM version too
 local NextPlayer = ''
 
 local state = {
     Hidden = true,
-    
-    
+
+
     Angle = 0,
     Linear = 0,
     AbsoluteLinear = 0,
     DX = 0,
     DY = 0,
-    
+
     Color = { R = 1, G = 1, B = 1 },
     Alpha = 0,
     Size = 0,
-    
+
     Colors = nil,
     Mode = nil,
-    
+
     Leader = nil,
     Player = nil,
-    
+
     Settings = nil,
-    
+
     Constants = {
         GameReticleSize = 58
     }
@@ -41,10 +41,10 @@ local defaultSettings = {
     MaxDistance = 128,
     PvPOnly = false,
     Mimic = true,
-	
-	Debug = false, 
+
+	Debug = false,
 	Sound = 'DUEL_WON',
-    
+
     LeaderArrowSize = false,
     LeaderArrowDistance = true,
     LeaderArrowNumeric = false
@@ -63,7 +63,7 @@ end
 local function UpdatePlayerEntity(entity)
     if entity == nil then return end
     if entity.Tag == FAKETAG then return end
-    
+
     entity.X, entity.Y, entity.Z = GetMapPlayerPosition(entity.Tag)
     entity.Zone = GetUnitZone(entity.Tag)
     entity.Name = GetUnitName(entity.Tag)
@@ -71,7 +71,7 @@ end
 
 local function CheckLeader()
     if state.Leader and state.Leader.Custom then return end
-    
+
 	local newLeader = GetGroupLeaderUnitTag()
     if newLeader == nil or newLeader == '' then
         state.Leader = nil
@@ -86,28 +86,28 @@ end
 
 local function UpdateReticle()
     if state.Player == nil then return end
-    
-    if (state.Leader == nil) or 
+
+    if (state.Leader == nil) or
        (state.Settings.PvPOnly and not IsInAvAZone()) or
-       (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) or 
+       (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) or
        (IsUnitGrouped('player') == false) then
         -- state.Hidden = true
     else
         -- state.Hidden = false
-        
+
         state.DX = state.Player.X - state.Leader.X
         state.DY = state.Player.Y - state.Leader.Y
         state.D = math.sqrt((state.DX * state.DX) + (state.DY * state.DY))
-        
+
         state.Angle = NormalizeAngle(state.Player.H - math.atan2( state.DX, state.DY ))
         state.Linear = state.Angle / math.pi
         state.AbsoluteLinear = math.abs(state.Linear)
-        
+
         state.Alpha = state.Settings.MinAlpha + (state.Settings.MaxAlpha - state.Settings.MinAlpha) * state.AbsoluteLinear;
-        
+
         if state.Settings.LeaderArrowSize then
             state.Size = state.Settings.MinSize + (state.Settings.MaxSize - state.Settings.MinSize) * (math.tanh(state.D * 40 - 1) + 1.0) / 2.0;
-        else 
+        else
             state.Size = state.Settings.MinSize + (state.Settings.MaxSize - state.Settings.MinSize) * state.AbsoluteLinear;
         end
         if state.Settings.LeaderArrowDistance then
@@ -116,7 +116,7 @@ local function UpdateReticle()
             state.Distance = state.Settings.MinDistance + (state.Settings.MaxDistance - state.Settings.MinDistance) * state.AbsoluteLinear;
         end
     end
-    
+
     state.Colors:Update(state)
     state.Mode:Update(state)
 end
@@ -124,22 +124,22 @@ end
 -- **************** EVENTS ****************
 
 -- onUpdate trigger
-function extGroupLeaderUpdate()
+function merlinsRezHelperUpdate()
     if state.Player == nil then return end
-	
+
 	-- 2Do check for nearest group member and et "as leader"
 	GetClosestMember()
-    
+
     UpdatePlayerEntity(state.Player)
     local h = NormalizeAngle(GetPlayerCameraHeading())
     if h ~= nil then state.Player.H = h end
-    
+
     CheckLeader()
     UpdatePlayerEntity(state.Leader)
-    
+
     if state.Leader == nil or state.Leader.X == nil or state.Leader.Y == nil then state.Leader = nil end
     if state.Leader == nil or state.Leader.Name == state.Player.Name then state.Leader = nil end
-    
+
     UpdateReticle()
 end
 
@@ -151,53 +151,53 @@ function GetClosestMember()
 	local closestPlayer = ''
 	local someoneIsDead = false
 	local closestDistance = 1000000
-		
+
 	-- if in group
-	if IsUnitGrouped('player') == true then 
-	
+	if IsUnitGrouped('player') == true then
+
 		-- foreach groupmember
-		
+
 		for xmemberid = 1, GetGroupSize(), 1 do
-		
+
             currentTag = GetGroupUnitTagByIndex(xmemberid)
             currentName = GetUnitName(currentTag)
-		
+
 			-- if death
-			if ((IsUnitDead(currentTag) and 
-				IsUnitBeingResurrected(currentTag)==false and 
-				DoesUnitHaveResurrectPending(currentTag)==false and 
-				IsUnitReincarnating(currentTag)==false and 
+			if ((IsUnitDead(currentTag) and
+				IsUnitBeingResurrected(currentTag)==false and
+				DoesUnitHaveResurrectPending(currentTag)==false and
+				IsUnitReincarnating(currentTag)==false and
 				(GetUnitName("player") ~= GetUnitName(currentTag))
-				) or state.Settings.Debug == true 
+				) or state.Settings.Debug == true
 				) then
 				someoneIsDead = true
-		
+
 				-- get position
 				currentDistance = CalcDistance(currentTag);
-		
-				-- override if its closer 
+
+				-- override if its closer
 				if currentDistance ~= nil and currentDistance ~= 0 then
 					if currentDistance<closestDistance then
 						closestPlayer = currentName
 						closestDistance = currentDistance
 					end
 				end
-				
+
 			end
 		end
-		
+
 		if someoneIsDead then
 			state.Hidden = false
 		else
 			state.Hidden = true
 		end
-		
+
 		if (closestPlayer ~= '') and (NextPlayer ~= closestPlayer) then
 			NextPlayer = closestPlayer
 			SetCustomLeader(closestPlayer)
 		end
-		
-		-- hide if mouse shown / on menu interface 
+
+		-- hide if mouse shown / on menu interface
 		if (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) then
 			state.Hidden = true
 		end
@@ -225,7 +225,7 @@ local function FakeIt(text)
     state.Leader.Tag = FAKETAG
     state.Leader.Name = FAKETAG
     state.Leader.Custom = true
-    
+
     --d("Leader faked.")
 	ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, GetString(SI_EXTGL_LEADER_FAKED))
 end
@@ -236,7 +236,7 @@ end
 
 -- Slash command for custom follow target ( /glset = set to default group leader - /glset <charname> = set to custom person )
 function SetCustomLeader(text)
-    if IsUnitGrouped('player') == false then 
+    if IsUnitGrouped('player') == false then
         --d("You must be in a group to set a follow target.")
 		ZO_Alert(UI_ALERT_CATEGORY_ERROR, SOUNDS.NONE, GetString(SI_GROUPELECTIONFAILURE8))
         return
@@ -256,7 +256,7 @@ function SetCustomLeader(text)
                 state.Leader.Name = GetUnitName(GetGroupUnitTagByIndex(xmember))
                 state.Leader.Custom = true
             else
-                --d("ZERO MATCH ON - ".. text .. " = " .. GetUnitName(GetGroupUnitTagByIndex(xmemberid))) 
+                --d("ZERO MATCH ON - ".. text .. " = " .. GetUnitName(GetGroupUnitTagByIndex(xmemberid)))
             end
 		end
 	   if not state.Leader.Custom then
@@ -270,7 +270,7 @@ end
 local function OnPlayerLeft(leftmemberName, reason, wasLocalPlayer)
     if IsUnitGrouped('player') == false then return end -- Ignore if you just left the group
     if state.Leader == nil then return end
-    
+
     local doesCustomExist = false
     for xmemberid = 1, GetGroupSize() , 1 do
         if GetGroupUnitTagByIndex(xmemberid) == state.Leader.Tag then
@@ -293,47 +293,47 @@ end
 -- **************** SETTINGS ****************
 
 local function LoadSettings()
-    extGroupLeaderSettings = extGroupLeaderSettings or {}
-    state.Settings = EXT_GROUPLEADER.Extend(extGroupLeaderSettings, defaultSettings)
+    merlinsRezHelperSettings = merlinsRezHelperSettings or {}
+    state.Settings = MERLINS_REZHELPER.Extend(merlinsRezHelperSettings, defaultSettings)
 end
 
 local function ChangeMode(value)
     state.Settings.Mode = value
     if state.Mode then state.Mode:Unit() end
-    state.Mode = EXT_GROUPLEADER.Modes[value]
+    state.Mode = MERLINS_REZHELPER.Modes[value]
     state.Mode.Init()
 end
 
 local function ChangeColors(value)
     state.Settings.Colors = value
     if state.Colors then state.Colors:Unit() end
-    state.Colors = EXT_GROUPLEADER.Colors[value]
+    state.Colors = MERLINS_REZHELPER.Colors[value]
     state.Colors.Init()
 end
 
 --local function ChangeSound(value)
 --    state.Settings.Sound = value
 --    if state.Sound then state.Sound:Unit() end
---    state.Sound = EXT_GROUPLEADER.Sound[value]
+--    state.Sound = MERLINS_REZHELPER.Sound[value]
 --    state.Sound.Init()
 --end
 
 local function CreateSettingsMenu()
 	local colorYellow = "|cFFFF22"
-	
+
 	local panelData = {
 		type = "panel",
 		name = "Merlins Rez Helper",
 		displayName = colorYellow.."Merlins|r Rez Helper",
 		author = "@Just_Merlin",
 		version = AddonVersion,
-		slashCommand = "/extGroupLeader",
+		slashCommand = "/merlinsRezHelper",
 		registerForRefresh = true,
 		registerForDefaults = true,
 	}
-	local cntrlOptionsPanel = LAM2:RegisterAddonPanel("extGroupLeader_Options", panelData)
+	local cntrlOptionsPanel = LAM2:RegisterAddonPanel("merlinsRezHelper_Options", panelData)
 
-	local optionsData = {	
+	local optionsData = {
 		[1] = {
 			type = "description",
 			text = colorYellow.."Merlins|r Rez Helper",
@@ -350,7 +350,7 @@ local function CreateSettingsMenu()
 			type = "dropdown",
 			name = GetString(SI_EXTGL_STYLE_COLOR),
 			tooltip = GetString(SI_EXTGL_STYLE_COLOR_TOOLTIP),
-			choices = EXT_GROUPLEADER.Colors.Plugins,
+			choices = MERLINS_REZHELPER.Colors.Plugins,
 			default = "Always White",
 			getFunc = function() return state.Settings.Colors end,
 			setFunc = function(bValue) ChangeColors(bValue) end
@@ -440,7 +440,7 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.Debug end,
 			setFunc = function(bValue) state.Settings.Debug = bValue end
 		},
-	
+
 		--[10] = {
 		--	type = "checkbox",
 		--	name = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL),
@@ -448,7 +448,7 @@ local function CreateSettingsMenu()
 		--	default = true,
 		--	getFunc = function() return state.Settings.PvPOnly  end,
 		--	setFunc = function(bValue) state.Settings.PvPOnly = bValue end
-		-- },	
+		-- },
 		--[11] = {
 		--	type = "checkbox",
 		--	name = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE),
@@ -457,7 +457,7 @@ local function CreateSettingsMenu()
 		--	getFunc = function() return state.Settings.Mimic end,
 		--	setFunc = function(bValue) state.Settings.Mimic = bValue end
 		--},
-		
+
 		[12] = {
 			type = "description",
 			text = colorYellow..GetString(SI_EXTGL_STYLE_LEADER_DISTANCE),
@@ -469,7 +469,7 @@ local function CreateSettingsMenu()
 			default = true,
 			getFunc = function() return state.Settings.LeaderArrowSize end,
 			setFunc = function(bValue) state.Settings.LeaderArrowSize = bValue end
-		},	
+		},
 		---[[
 		[14] = {
 			type = "checkbox",
@@ -478,31 +478,30 @@ local function CreateSettingsMenu()
 			default = true,
 			getFunc = function() return state.Settings.LeaderArrowDistance end,
 			setFunc = function(bValue) state.Settings.LeaderArrowDistance = bValue end
-		},	
+		},
 		--]]
-	}		
-	
-	LAM2:RegisterOptionControls("extGroupLeader_Options", optionsData)
+	}
+
+	LAM2:RegisterOptionControls("merlinsRezHelper_Options", optionsData)
 end
 
 local function OnPluginLoaded(event, addon)
-	if addon ~= "extGroupLeader" then return end
-    
+	if addon ~= "merlinsRezHelper" then return end
+
     LoadSettings()
     CreateSettingsMenu()
-    
+
     ChangeMode(state.Settings.Mode)
     ChangeColors(state.Settings.Colors)
     ---ChangeSound(state.Settings.Sound)
-        
+
     InitializePlugin()
-    
+
     -- SLASH_COMMANDS["/glfake"] = FakeIt
     -- SLASH_COMMANDS["/glset"] = SetCustomLeader
 end
 
 
 
-EVENT_MANAGER:RegisterForEvent("extGroupLeader", EVENT_ADD_ON_LOADED, OnPluginLoaded)
-EVENT_MANAGER:RegisterForEvent("extGroupLeader", EVENT_GROUP_MEMBER_LEFT, OnPlayerLeft)
-    
+EVENT_MANAGER:RegisterForEvent("merlinsRezHelper", EVENT_ADD_ON_LOADED, OnPluginLoaded)
+EVENT_MANAGER:RegisterForEvent("merlinsRezHelper", EVENT_GROUP_MEMBER_LEFT, OnPlayerLeft)

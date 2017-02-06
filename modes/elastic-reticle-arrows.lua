@@ -1,14 +1,14 @@
 local LIB = "Elastic Reticle Arrows"
-local era = EXT_GROUPLEADER.Modes[LIB]
+local era = MERLINS_REZHELPER.Modes[LIB]
 local left, right, ui;
 
 if not era then
    
-    era = EXT_GROUPLEADER.Modes:Register(LIB)
+    era = MERLINS_REZHELPER.Modes:Register(LIB)
     
     function era:Init()
         
-        ui = EXT_GROUPLEADER.UI
+        ui = MERLINS_REZHELPER.UI
         left, right = ui:RequestTextureFrames({
             { Texture = "elastic-reticle-arrows/left.dds", Movable = false },
             { Texture = "elastic-reticle-arrows/right.dds", Movable = false }

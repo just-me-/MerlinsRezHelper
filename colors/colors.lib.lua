@@ -1,12 +1,12 @@
 local LIB = "Colors"
-local Colors = EXT_GROUPLEADER[LIB]
+local Colors = MERLINS_REZHELPER[LIB]
 
 if not Colors then
    
     Colors = Colors or {
         Plugins = {}
     }
-    EXT_GROUPLEADER[LIB] = Colors
+    MERLINS_REZHELPER[LIB] = Colors
     
     function Colors:Register(name)
         table.insert(Colors.Plugins, name)

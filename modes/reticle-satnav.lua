@@ -1,14 +1,14 @@
 local LIB = "Reticle Satnav"
-local satnav = EXT_GROUPLEADER.Modes[LIB]
+local satnav = MERLINS_REZHELPER.Modes[LIB]
 local arrow, right, ui;
 
 if not satnav then
    
-    satnav = EXT_GROUPLEADER.Modes:Register(LIB)
+    satnav = MERLINS_REZHELPER.Modes:Register(LIB)
     
     function satnav:Init()
         
-        ui = EXT_GROUPLEADER.UI
+        ui = MERLINS_REZHELPER.UI
         arrow = ui:RequestTextureFrames({
             { Texture = "satnav/up.dds", Movable = true }
         })

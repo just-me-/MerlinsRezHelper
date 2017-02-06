@@ -1,19 +1,19 @@
-local LIB = "EXT_GROUPLEADER";
-local EXT_GROUPLEADER = _G[LIB];
+local LIB = "MERLINS_REZHELPER";
+local MERLINS_REZHELPER = _G[LIB];
 
-if not EXT_GROUPLEADER then
+if not MERLINS_REZHELPER then
    
-    EXT_GROUPLEADER = EXT_GROUPLEADER or {}
-    _G[LIB] = EXT_GROUPLEADER
+    MERLINS_REZHELPER = MERLINS_REZHELPER or {}
+    _G[LIB] = MERLINS_REZHELPER
     
-    EXT_GROUPLEADER.NormalizeAngle = function (s, c)
+    MERLINS_REZHELPER.NormalizeAngle = function (s, c)
         if c == nil then c = s end
         if c > math.pi then return c - 2 * math.pi end
         if c < -math.pi then return c + 2 * math.pi end
         return c
     end
     
-    function EXT_GROUPLEADER.Extend(value, default)
+    function MERLINS_REZHELPER.Extend(value, default)
         value = value or {}
         for k,v in pairs(default) do
             if type(value[k]) == "nil" then
@@ -23,7 +23,7 @@ if not EXT_GROUPLEADER then
         return value
     end
     
-    function EXT_GROUPLEADER.Class(base, init)
+    function MERLINS_REZHELPER.Class(base, init)
        local c = {}    -- a new class instance
        if not init and type(base) == 'function' then
           init = base
