@@ -1,0 +1,9 @@
+<Bindings>
+  <Layer name="General">
+    <Category name="Targeting">
+      <Action name="SET_GROUP_LEADER">
+        <Down>OnSetTargettedLeader() return true</Down>
+      </Action>
+    </Category>
+  </Layer>
+</Bindings>

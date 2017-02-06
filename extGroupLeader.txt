@@ -1,0 +1,25 @@
+## Title: Exterminatus Group Leader
+## APIVersion: 100004
+## Version: 0.7
+## Author: Exterminatus EU Members
+## OptionalDependsOn: LibAddonMenu-1.0
+## SavedVariables: extGroupLeaderSettings
+
+lib\LibStub\LibStub.lua
+lib\LibAddonMenu-1.0\LibAddonMenu-1.0.lua
+
+extGroupLeader.lib.lua
+ui\ui.lib.lua
+modes\modes.lib.lua
+colors\colors.lib.lua
+
+modes\elastic-reticle-arrows.lua
+modes\satnav.lua
+modes\reticle-satnav.lua
+colors\white.lua
+colors\white-orange-red.lua
+colors\green-orange-red.lua
+
+extGroupLeader.lua
+extGroupLeader.xml
+Bindings.xml
