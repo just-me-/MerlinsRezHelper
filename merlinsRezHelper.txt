@@ -1,6 +1,6 @@
-## Title: |c42cbf4Merlins Rez Helper 2|r
-## APIVersion: 100017
-## Version: 1.4.1
+## Title: |c42cbf4Merlin's Rez Helper|r
+## APIVersion: 100018
+## Version: 1.4.2
 ## Author: @Just_Merlin
 ## OptionalDependsOn: LibAddonMenu-2.0
 ## SavedVariables: merlinsRezHelperSettings

@@ -6,7 +6,6 @@ local NextPlayer = ''
 local state = {
     Hidden = true,
 
-
     Angle = 0,
     Linear = 0,
     AbsoluteLinear = 0,
@@ -42,8 +41,8 @@ local defaultSettings = {
     PvPOnly = false,
     Mimic = true,
 
-	Debug = false,
-	Sound = 'DUEL_WON',
+  	Debug = false,
+  	Sound = 'DUEL_WON',
 
     LeaderArrowSize = false,
     LeaderArrowDistance = true,
@@ -311,20 +310,13 @@ local function ChangeColors(value)
     state.Colors.Init()
 end
 
---local function ChangeSound(value)
---    state.Settings.Sound = value
---    if state.Sound then state.Sound:Unit() end
---    state.Sound = MERLINS_REZHELPER.Sound[value]
---    state.Sound.Init()
---end
-
 local function CreateSettingsMenu()
 	local colorYellow = "|cFFFF22"
 
 	local panelData = {
 		type = "panel",
 		name = "Merlins Rez Helper",
-		displayName = colorYellow.."Merlins|r Rez Helper",
+		displayName = colorYellow.."Merlin's|r Rez Helper",
 		author = "@Just_Merlin",
 		version = AddonVersion,
 		slashCommand = "/merlinsRezHelper",
@@ -336,7 +328,7 @@ local function CreateSettingsMenu()
 	local optionsData = {
 		[1] = {
 			type = "description",
-			text = colorYellow.."Merlins|r Rez Helper",
+			text = colorYellow.."Merlin's|r Rez Helper",
 		},
 		[2] = {
 			type = "dropdown",
@@ -440,24 +432,6 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.Debug end,
 			setFunc = function(bValue) state.Settings.Debug = bValue end
 		},
-
-		--[10] = {
-		--	type = "checkbox",
-		--	name = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL),
-		--	tooltip = GetString(SI_EXTGL_SETTING_ONLY_CYRODIIL_TOOLTIP),
-		--	default = true,
-		--	getFunc = function() return state.Settings.PvPOnly  end,
-		--	setFunc = function(bValue) state.Settings.PvPOnly = bValue end
-		-- },
-		--[11] = {
-		--	type = "checkbox",
-		--	name = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE),
-		--	tooltip = GetString(SI_EXTGL_SETTING_MIMIC_RETICLE_TOOLTIP),
-		--	default = false,
-		--	getFunc = function() return state.Settings.Mimic end,
-		--	setFunc = function(bValue) state.Settings.Mimic = bValue end
-		--},
-
 		[12] = {
 			type = "description",
 			text = colorYellow..GetString(SI_EXTGL_STYLE_LEADER_DISTANCE),
@@ -470,7 +444,6 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.LeaderArrowSize end,
 			setFunc = function(bValue) state.Settings.LeaderArrowSize = bValue end
 		},
-		---[[
 		[14] = {
 			type = "checkbox",
 			name = GetString(SI_EXTGL_STYLE_ARROW_DISTANCE),
@@ -479,7 +452,6 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.LeaderArrowDistance end,
 			setFunc = function(bValue) state.Settings.LeaderArrowDistance = bValue end
 		},
-		--]]
 	}
 
 	LAM2:RegisterOptionControls("merlinsRezHelper_Options", optionsData)
@@ -493,14 +465,12 @@ local function OnPluginLoaded(event, addon)
 
     ChangeMode(state.Settings.Mode)
     ChangeColors(state.Settings.Colors)
-    ---ChangeSound(state.Settings.Sound)
 
     InitializePlugin()
 
     -- SLASH_COMMANDS["/glfake"] = FakeIt
     -- SLASH_COMMANDS["/glset"] = SetCustomLeader
 end
-
 
 
 EVENT_MANAGER:RegisterForEvent("merlinsRezHelper", EVENT_ADD_ON_LOADED, OnPluginLoaded)
