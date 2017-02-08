@@ -2,6 +2,7 @@
 ## APIVersion: 100018
 ## Version: 1.4.2
 ## Author: @Just_Merlin
+## Description: Shows location of dead group members to rez them faster. 
 ## OptionalDependsOn: LibAddonMenu-2.0
 ## SavedVariables: merlinsRezHelperSettings
 
@@ -38,4 +39,4 @@ colors\green-orange-red.lua
 
 merlinsRezHelper.lua
 merlinsRezHelper.xml
-Bindings.xml
+--Bindings.xml -- for Settings - Keybindings
