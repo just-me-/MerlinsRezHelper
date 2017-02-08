@@ -34,7 +34,7 @@ What does it
 Merlins Rez Helper [DE]
 ==================
 
-Dieses Addon wird dir helfen, tote Gruppenmitglieder so schnell wie möglich wiederzubeleben und so in den Kampf zurückbringen. 
+Dieses Addon wird dir helfen, tote Gruppenmitglieder so schnell wie möglich wiederzubeleben und so in den Kampf zurückzubringen. 
 
 Wenn ein Gruppenmitglied gestorben ist, wird ein Pfeil angezeigt, welcher dich zum nächst gelegenen, toten Gruppenmitglied führt. 
 Falls niemand in deiner Gruppe tot ist, wird auch kein Pfeil angezeigt. 
@@ -60,4 +60,4 @@ Funktionen
 
  * Pfeil Layout, Farbe, Grösse und Transparenz
  * Soundeffekt, wenn jemand stirbt 
- * Vieles mehr - die Hover-Tooltips in den Einstellungen sind selbstbeschreibend 
+ * Vieles mehr - die Hover-Tooltips in den Einstellungen sind selbsterklärend 
