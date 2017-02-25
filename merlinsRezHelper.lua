@@ -1,10 +1,11 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'MERLINS_REZHELPER_FAKE'
-local AddonVersion = '1.4.1' -- and for LAM version too
+local AddonVersion = '1.5.0' -- and for LAM version too
 local NextPlayer = ''
 
 local state = {
     Hidden = true,
+    SetCloseIcon = false,
 
     Angle = 0,
     Linear = 0,
@@ -42,6 +43,8 @@ local defaultSettings = {
     Mimic = true,
 
   	Debug = false,
+  	RangeLimit = false,
+  	CloseIcon = true,
   	Sound = 'DUEL_WON',
 
     LeaderArrowSize = false,
@@ -126,8 +129,8 @@ end
 function merlinsRezHelperUpdate()
     if state.Player == nil then return end
 
-	-- 2Do check for nearest group member and et "as leader"
-	GetClosestMember()
+	  -- 2Do check for nearest group member and et "as leader"
+    GetClosestMember()
 
     UpdatePlayerEntity(state.Player)
     local h = NormalizeAngle(GetPlayerCameraHeading())
@@ -149,7 +152,10 @@ function GetClosestMember()
 	local currentDistance
 	local closestPlayer = ''
 	local someoneIsDead = false
+
 	local closestDistance = 1000000
+	local maxDistance = 0.1
+	local closeDistance = 0.002
 
 	-- if in group
 	if IsUnitGrouped('player') == true then
@@ -158,29 +164,44 @@ function GetClosestMember()
 
 		for xmemberid = 1, GetGroupSize(), 1 do
 
-            currentTag = GetGroupUnitTagByIndex(xmemberid)
-            currentName = GetUnitName(currentTag)
+      currentTag = GetGroupUnitTagByIndex(xmemberid)
+      currentName = GetUnitName(currentTag)
+
+    --  d(IsUnitOnline(currentTag))
 
 			-- if death
 			if ((IsUnitDead(currentTag) and
 				IsUnitBeingResurrected(currentTag)==false and
 				DoesUnitHaveResurrectPending(currentTag)==false and
 				IsUnitReincarnating(currentTag)==false and
+        IsUnitOnline(currentTag)==true and
 				(GetUnitName("player") ~= GetUnitName(currentTag))
 				) or state.Settings.Debug == true
 				) then
-				someoneIsDead = true
 
 				-- get position
 				currentDistance = CalcDistance(currentTag);
+        -- d(currentDistance)
 
-				-- override if its closer
-				if currentDistance ~= nil and currentDistance ~= 0 then
+        -- dont show location of to far away members
+        if (currentDistance<maxDistance or state.Settings.RangeLimit ~= true) and currentDistance ~= 0 and currentDistance ~= nil then
+          -- some one in range is dead and its not you
+  				someoneIsDead = true
+
+  				-- override if its closer
 					if currentDistance<closestDistance then
 						closestPlayer = currentName
 						closestDistance = currentDistance
+
+            if (currentDistance<closeDistance and state.Settings.CloseIcon == true) then
+                state.SetCloseIcon = true
+            else
+                state.SetCloseIcon = false
+            end
+
 					end
-				end
+
+        end
 
 			end
 		end
@@ -451,6 +472,22 @@ local function CreateSettingsMenu()
 			default = true,
 			getFunc = function() return state.Settings.LeaderArrowDistance end,
 			setFunc = function(bValue) state.Settings.LeaderArrowDistance = bValue end
+		},
+		[15] = {
+			type = "checkbox",
+			name = GetString(SI_EXTGL_STYLE_CLOSE_ICON),
+			tooltip = GetString(SI_EXTGL_STYLE_CLOSE_ICON_TOOLTIP),
+			default = true,
+			getFunc = function() return state.Settings.CloseIcon end,
+			setFunc = function(bValue) state.Settings.CloseIcon = bValue end
+		},
+		[16] = {
+			type = "checkbox",
+			name = GetString(SI_EXTGL_STYLE_RANGE_LIMIT).." (Beta)",
+			tooltip = GetString(SI_EXTGL_STYLE_RANGE_LIMIT_TOOLTIP),
+			default = false,
+			getFunc = function() return state.Settings.RangeLimit end,
+			setFunc = function(bValue) state.Settings.RangeLimit = bValue end
 		},
 	}
 

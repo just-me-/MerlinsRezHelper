@@ -60,3 +60,8 @@ ZO_CreateStringId("SI_EXTGL_STYLE_SOUND" , "Sound Effect");
 ZO_CreateStringId("SI_EXTGL_STYLE_DEBUG" , "Debug Mode");
 ZO_CreateStringId("SI_EXTGL_STYLE_DEBUG_TOOLTIP" , "Helpfull to set fitting settings for you. (only in group)");
 
+ZO_CreateStringId("SI_EXTGL_STYLE_CLOSE_ICON" , "Close Icon");
+ZO_CreateStringId("SI_EXTGL_STYLE_CLOSE_ICON_TOOLTIP" , "Change icon if you are really close to a dead player. This is to prevent that you will stand on a player and you do not notice it.");
+
+ZO_CreateStringId("SI_EXTGL_STYLE_RANGE_LIMIT" , "Range Limit");
+ZO_CreateStringId("SI_EXTGL_STYLE_RANGE_LIMIT_TOOLTIP" , "Only show close players. (helpfull in AvA)");

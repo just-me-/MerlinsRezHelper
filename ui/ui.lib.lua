@@ -83,6 +83,13 @@ if not ui then
         end
     end
 
+    function TextureFrame:SetTesoTexture(value)
+        if self.Texture ~= value then
+            self.Texture = value
+            self.SystemFrame:SetTexture(value)
+        end
+    end
+
     function TextureFrame:SetMovable(value)
         if self.Movable ~= value then
             self.Movable = value
