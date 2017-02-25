@@ -61,7 +61,7 @@ SafeAddString(SI_EXTGL_STYLE_DEBUG , "Einstellungs- und Debugmodus");
 SafeAddString(SI_EXTGL_STYLE_DEBUG_TOOLTIP , "Nützlich für die Pfeileinstellungen. (nur in einer Gruppe)");
 
 SafeAddString(SI_EXTGL_STYLE_CLOSE_ICON , "Nahes Icon");
-SafeAddString(SI_EXTGL_STYLE_CLOSE_ICON_TOOLTIP , "Ändert das Anzeigesymbol, wenn du in der Nähe eines toten Spielers bist. Dies soll helfen, dass du auf einem toten Spieler stehst und es nicht merkst.");
+SafeAddString(SI_EXTGL_STYLE_CLOSE_ICON_TOOLTIP , "Ändert das Anzeigesymbol, wenn du in der Nähe eines toten Spielers bist. Dies soll dir helfen, dass du nicht auf einem toten Spieler stehst, ohne es zu merken.");
 
 SafeAddString(SI_EXTGL_STYLE_RANGE_LIMIT , "Reichweiten Limit");
 SafeAddString(SI_EXTGL_STYLE_RANGE_LIMIT_TOOLTIP , "Zeigt dir nur nahe Spieler. (hilfreich im AvA)");
