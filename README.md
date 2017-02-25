@@ -29,6 +29,12 @@ What does it
  * Arrow layout, color, size, opacity
  * Sound effect when someone dies
  * Loads more - the setting hover tooltips should be self explanatory
+ 
+ **Patchnotes V1.5.0**
+
+ * Bugfix: Dead players who have gone offline will not get an arrow.
+ * New feature: Close Icon - Change icon if you are really close to a dead player. This is to prevent that you will stand on a player and you do not notice it.
+ * New feature: Range Limit - Only show close player. This is helpfull in AvA. Let me know, if a larger or smaller range would be useful for you or you have even the wish to have a slider for an individual range.
 
 
 Merlins Rez Helper [DE]
@@ -61,3 +67,9 @@ Funktionen
  * Pfeil Layout, Farbe, Grösse und Transparenz
  * Soundeffekt, wenn jemand stirbt 
  * Vieles mehr - die Hover-Tooltips in den Einstellungen sind selbsterklärend 
+ 
+**Versionsinformation**
+
+ * Fehlerbehebung: Tote Spieler, die sich ausgeloggt haben, bekommen nun keinen Pfeil mehr. 
+ * Neue Funktion: Nahes Icon - Ändert das Anzeigesymbol, wenn du in der Nähe eines toten Spielers bist. Dies soll dir helfen, dass du nicht auf einem toten Spieler stehst, ohne es zu merken.
+ * Neue Funktion: Reichweiten Limit - Zeigt dir nur nahe Spieler. Dies ist hilfreich im AvA. Lass es mich wissen, wenn du eine grössere oder kleinere Reichweite für sinnvoll hältst oder du sogar keinen Slider für eine individuelle Reichweite wünschen würdest. 
