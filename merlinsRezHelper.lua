@@ -1,6 +1,6 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'MERLINS_REZHELPER_FAKE'
-local AddonVersion = '1.5.0' -- and for LAM version too
+local AddonVersion = '1.5.1' -- and for LAM version too
 local NextPlayer = ''
 
 local state = {
@@ -157,6 +157,11 @@ function GetClosestMember()
 	local maxDistance = 0.1
 	local closeDistance = 0.002
 
+  if (IsInAvAZone()) then
+    closeDistance = (closeDistance/10)
+    maxDistance = (maxDistance/10)
+  end
+
 	-- if in group
 	if IsUnitGrouped('player') == true then
 
@@ -167,14 +172,13 @@ function GetClosestMember()
       currentTag = GetGroupUnitTagByIndex(xmemberid)
       currentName = GetUnitName(currentTag)
 
-    --  d(IsUnitOnline(currentTag))
-
-			-- if death
+			-- if death and online and in the same zone OR debug
 			if ((IsUnitDead(currentTag) and
 				IsUnitBeingResurrected(currentTag)==false and
 				DoesUnitHaveResurrectPending(currentTag)==false and
 				IsUnitReincarnating(currentTag)==false and
         IsUnitOnline(currentTag)==true and
+        GetUnitZone(currentTag) == GetUnitZone("player") and
 				(GetUnitName("player") ~= GetUnitName(currentTag))
 				) or state.Settings.Debug == true
 				) then
