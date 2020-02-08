@@ -1,6 +1,6 @@
 ## Title: |c42cbf4Merlin's Rez Helper|r
-## APIVersion: 100019
-## Version: 1.5.2
+## APIVersion: 100029
+## Version: 1.5.3
 ## Author: @Just_Merlin
 ## Description: Shows location of dead group members to rez them faster.
 ## OptionalDependsOn: LibAddonMenu-2.0

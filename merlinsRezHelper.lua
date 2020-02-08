@@ -1,6 +1,6 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'MERLINS_REZHELPER_FAKE'
-local AddonVersion = '1.5.2' -- and for LAM version too
+local AddonVersion = '1.5.3' -- and for LAM version too
 local NextPlayer = ''
 
 local state = {
