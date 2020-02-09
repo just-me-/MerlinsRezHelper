@@ -5,6 +5,7 @@ local NextPlayer = ''
 
 local state = {
     Hidden = true,
+	ForceBeam = false,
     SetCloseIcon = false,
 
     Angle = 0,
@@ -156,6 +157,7 @@ function TestLight()
 	CalcLightPos(x, y)
 	d(lightReference)
 	lightReference:SetHidden(false)
+	state.ForceBeam = true
 end
 
 function ShowLight()
@@ -194,7 +196,7 @@ function TTTest()
 end
 
 function HideLight()
-	if lightReference ~= nil and state.Hidden ~= false then 
+	if lightReference ~= nil and state.Hidden ~= false and state.ForceBeam == false then 
 		lightReference:SetHidden(true)
 	end
 end
