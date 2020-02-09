@@ -1,6 +1,6 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'MERLINS_REZHELPER_FAKE'
-local AddonVersion = '1.5.3' -- and for LAM version too
+local AddonVersion = '1.5.3'
 local NextPlayer = ''
 
 local state = {
@@ -52,6 +52,8 @@ local defaultSettings = {
     LeaderArrowNumeric = false
 }
 
+local lightReference = nil
+
 -- **************** UTILS ****************
 
 local function NormalizeAngle(c)
@@ -94,6 +96,7 @@ local function UpdateReticle()
        (state.Settings.Mimic and ZO_ReticleContainer:IsHidden() == true) or
        (IsUnitGrouped('player') == false) then
         -- state.Hidden = true
+		HideLight()
     else
         -- state.Hidden = false
 
@@ -117,10 +120,53 @@ local function UpdateReticle()
         else
             state.Distance = state.Settings.MinDistance + (state.Settings.MaxDistance - state.Settings.MinDistance) * state.AbsoluteLinear;
         end
+		ShowLight(state.Leader.Name)
     end
 
     state.Colors:Update(state)
     state.Mode:Update(state)
+end
+
+function CreateLight()
+	local wm = GetWindowManager() 
+	lightReference = wm:CreateTopLevelWindow("playerPosition")
+	lightReference:SetDrawTier(0)
+	lightReference:SetDrawLayer(0)
+	lightReference:SetDrawLevel(0)
+	lightReference.texture = wm:CreateControl("light", lightReference, CT_TEXTURE)
+	lightReference.texture:SetTexture("MerlinsRezHelper/textures/Beam1.dds")
+	lightReference:Create3DRenderSpace()
+	lightReference.texture:Create3DRenderSpace()
+	lightReference.texture:Set3DLocalDimensions(1, 256)
+	lightReference.texture:SetDrawLevel(3)
+	lightReference.texture:SetColor(1,1,1,1)
+	lightReference.texture:SetParent(lightReference)
+	lightReference:Set3DRenderSpaceOrigin(0,0,0)
+	HideLight()
+end
+
+function ShowLight(player)
+	local lib3D = Lib3D
+	d("in")
+	if not player then
+		player = "player"
+	end
+
+	local x, y, z = GetMapPlayerPosition("player")
+	local worldX, worldZ = lib3D:LocalToWorld(x, y)
+	local _, height, _ = lib3D:GetCameraRenderSpacePosition()
+	if worldX ~= nil and worldZ ~= nil then
+		worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ*100)
+	end
+	lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
+	
+	lightReference:SetHidden(false)
+end
+
+function HideLight()
+	if lightReference then 
+		lightReference:SetHidden(false)
+	end
 end
 
 -- **************** EVENTS ****************
@@ -129,7 +175,7 @@ end
 function merlinsRezHelperUpdate()
     if state.Player == nil then return end
 
-	  -- 2Do check for nearest group member and et "as leader"
+	  -- 2Do check for nearest group member and set "as leader"
     GetClosestMember()
 
     UpdatePlayerEntity(state.Player)
@@ -312,6 +358,7 @@ local function InitializePlugin()
     state.Player = {
         Tag = 'player'
     }
+	CreateLight()
 end
 
 -- **************** SETTINGS ****************
@@ -511,6 +558,10 @@ local function OnPluginLoaded(event, addon)
 
     -- SLASH_COMMANDS["/glfake"] = FakeIt
     -- SLASH_COMMANDS["/glset"] = SetCustomLeader
+	SLASH_COMMANDS["/ff"] = CreateLight
+	SLASH_COMMANDS["/fs"] = ShowLight
+	SLASH_COMMANDS["/fh"] = HideLight
+	
 end
 
 
