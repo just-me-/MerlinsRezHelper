@@ -57,6 +57,9 @@ ZO_CreateStringId("SI_EXTGL_SETTING_CONTRIBUTORS" , "Contributors|r");
 
 ZO_CreateStringId("SI_EXTGL_STYLE_SOUND" , "Sound Effect");
 
+ZO_CreateStringId("SI_EXTGL_STYLE_BEAM" , "Beam of Light (Beta)");
+ZO_CreateStringId("SI_EXTGL_STYLE_BEAM_TOOLTIP" , "A beam is pointing out your Rez target.");
+
 ZO_CreateStringId("SI_EXTGL_STYLE_DEBUG" , "Debug Mode");
 ZO_CreateStringId("SI_EXTGL_STYLE_DEBUG_TOOLTIP" , "Helpfull to set fitting settings for you. (only in group)");
 

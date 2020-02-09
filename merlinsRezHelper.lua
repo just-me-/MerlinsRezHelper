@@ -134,35 +134,39 @@ local function UpdateReticle()
 end
 
 function CreateLight()
-	local wm = GetWindowManager() 
-	lightReference = wm:CreateTopLevelWindow("playerPosition")
-	lightReference:SetDrawTier(0)
-	lightReference:SetDrawLayer(0)
-	lightReference:SetDrawLevel(0)
-	lightReference.texture = wm:CreateControl("light", lightReference, CT_TEXTURE)
-	lightReference.texture:SetTexture("MerlinsRezHelper/textures/Beam.dds")
-	lightReference:Create3DRenderSpace()
-	lightReference.texture:Create3DRenderSpace()
-	lightReference.texture:Set3DLocalDimensions(1, 256)
-	lightReference.texture:SetDrawLevel(3)
-	lightReference.texture:SetColor(1,1,1,1)
-	lightReference.texture:SetParent(lightReference)
-	lightReference:Set3DRenderSpaceOrigin(0,0,0)
-	HideLight()
+	if state.Settings.Beam == true then
+		local wm = GetWindowManager() 
+		lightReference = wm:CreateTopLevelWindow("playerPosition")
+		lightReference:SetDrawTier(0)
+		lightReference:SetDrawLayer(0)
+		lightReference:SetDrawLevel(0)
+		lightReference.texture = wm:CreateControl("light", lightReference, CT_TEXTURE)
+		lightReference.texture:SetTexture("MerlinsRezHelper/textures/Beam.dds")
+		lightReference:Create3DRenderSpace()
+		lightReference.texture:Create3DRenderSpace()
+		lightReference.texture:Set3DLocalDimensions(1, 256)
+		lightReference.texture:SetDrawLevel(3)
+		lightReference.texture:SetColor(1,1,1,1)
+		lightReference.texture:SetParent(lightReference)
+		lightReference:Set3DRenderSpaceOrigin(0,0,0)
+		HideLight()
+	end
 end
 
 function ShowLight()
-	local lib3D = Lib3D
-	if (lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then 
-		local worldX, worldZ = lib3D:LocalToWorld(state.Leader.X, state.Leader.Y)
-		local _, height, _ = lib3D:GetCameraRenderSpacePosition()
-		if worldX ~= nil and worldZ ~= nil then
-			worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
-		end
-		lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
-		
-		lightReference:SetHidden(false)
-	end 
+	if state.Settings.Beam == true then
+		local lib3D = Lib3D
+		if (lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then 
+			local worldX, worldZ = lib3D:LocalToWorld(state.Leader.X, state.Leader.Y)
+			local _, height, _ = lib3D:GetCameraRenderSpacePosition()
+			if worldX ~= nil and worldZ ~= nil then
+				worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
+			end
+			lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
+			
+			lightReference:SetHidden(false)
+		end 
+	end
 end
 
 function HideLight()
@@ -500,17 +504,25 @@ local function CreateSettingsMenu()
 		},
 		[11] = {
 			type = "checkbox",
+			name = GetString(SI_EXTGL_STYLE_BEAM),
+			tooltip = GetString(SI_EXTGL_STYLE_BEAM_TOOLTIP),
+			default = true,
+			getFunc = function() return state.Settings.Beam end,
+			setFunc = function(bValue) state.Settings.Beam = bValue end
+		},
+		[12] = {
+			type = "checkbox",
 			name = GetString(SI_EXTGL_STYLE_DEBUG),
 			tooltip = GetString(SI_EXTGL_STYLE_DEBUG_TOOLTIP),
 			default = false,
 			getFunc = function() return state.Settings.Debug end,
 			setFunc = function(bValue) state.Settings.Debug = bValue end
 		},
-		[12] = {
+		[13] = {
 			type = "description",
 			text = colorYellow..GetString(SI_EXTGL_STYLE_LEADER_DISTANCE),
 		},
-		[13] = {
+		[14] = {
 			type = "checkbox",
 			name = GetString(SI_EXTGL_STYLE_ARROW_SIZE),
 			tooltip = GetString(SI_EXTGL_STYLE_ARROW_SIZE_TOOLTIP),
@@ -518,7 +530,7 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.LeaderArrowSize end,
 			setFunc = function(bValue) state.Settings.LeaderArrowSize = bValue end
 		},
-		[14] = {
+		[15] = {
 			type = "checkbox",
 			name = GetString(SI_EXTGL_STYLE_ARROW_DISTANCE),
 			tooltip = GetString(SI_EXTGL_STYLE_ARROW_DISTANCE_TOOLTIP),
@@ -526,7 +538,7 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.LeaderArrowDistance end,
 			setFunc = function(bValue) state.Settings.LeaderArrowDistance = bValue end
 		},
-		[15] = {
+		[16] = {
 			type = "checkbox",
 			name = GetString(SI_EXTGL_STYLE_CLOSE_ICON),
 			tooltip = GetString(SI_EXTGL_STYLE_CLOSE_ICON_TOOLTIP),
@@ -534,7 +546,7 @@ local function CreateSettingsMenu()
 			getFunc = function() return state.Settings.CloseIcon end,
 			setFunc = function(bValue) state.Settings.CloseIcon = bValue end
 		},
-		[16] = {
+		[17] = {
 			type = "checkbox",
 			name = GetString(SI_EXTGL_STYLE_RANGE_LIMIT).." (Beta)",
 			tooltip = GetString(SI_EXTGL_STYLE_RANGE_LIMIT_TOOLTIP),

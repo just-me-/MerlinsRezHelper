@@ -57,6 +57,9 @@ SafeAddString(SI_EXTGL_SETTING_CONTRIBUTORS , "Mitwirkende|r");
 
 SafeAddString(SI_EXTGL_STYLE_SOUND , "Sound Effekt");
 
+SafeAddString(SI_EXTGL_STYLE_BEAM , "Lichtstrahl (Beta)");
+SafeAddString(SI_EXTGL_STYLE_BEAM_TOOLTIP , "Ein Lichtstrahl hebt die Position des wiederzubelebenden Spielers an.");
+
 SafeAddString(SI_EXTGL_STYLE_DEBUG , "Einstellungs- und Debugmodus");
 SafeAddString(SI_EXTGL_STYLE_DEBUG_TOOLTIP , "Nützlich für die Pfeileinstellungen. (nur in einer Gruppe)");
 
