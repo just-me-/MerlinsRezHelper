@@ -1,6 +1,6 @@
 local LAM2 = LibStub("LibAddonMenu-2.0")
 local FAKETAG = 'MERLINS_REZHELPER_FAKE'
-local AddonVersion = '1.5.3'
+local AddonVersion = '2.0.0'
 local NextPlayer = ''
 
 local state = {
@@ -121,12 +121,7 @@ local function UpdateReticle()
             state.Distance = state.Settings.MinDistance + (state.Settings.MaxDistance - state.Settings.MinDistance) * state.AbsoluteLinear;
         end
 		
-		-- quick n dirty fix for some lib random errors - try catch 
-		if pcall(ShowLight) then
-			-- worked
-		else
-			--d("meh")
-		end
+		ShowLight()
     end
 
     state.Colors:Update(state)
@@ -153,20 +148,29 @@ function CreateLight()
 	end
 end
 
+function TestLight()
+	local x, y, z = GetMapPlayerPosition("player")
+	CalcLightPos(x, y)
+	lightReference:SetHidden(false)
+end
+
 function ShowLight()
 	if state.Settings.Beam == true then
-		local lib3D = Lib3D
-		if (lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then 
-			local worldX, worldZ = lib3D:LocalToWorld(state.Leader.X, state.Leader.Y)
-			local _, height, _ = lib3D:GetCameraRenderSpacePosition()
-			if worldX ~= nil and worldZ ~= nil then
-				worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
-			end
-			lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
-			
+		if (Lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then 
+			CalcLightPos(state.Leader.X, state.Leader.Y)
 			lightReference:SetHidden(false)
 		end 
 	end
+end
+
+function CalcLightPos(x, y)
+	local worldX, worldZ = nil, nil
+	worldX, worldZ = Lib3D:LocalToWorld(x, y)	
+	local _, height, _ = Lib3D:GetCameraRenderSpacePosition()
+	if worldX ~= nil and worldZ ~= nil then
+		worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
+	end
+	lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
 end
 
 function HideLight()
@@ -572,6 +576,7 @@ local function OnPluginLoaded(event, addon)
 
     -- SLASH_COMMANDS["/glfake"] = FakeIt
     -- SLASH_COMMANDS["/glset"] = SetCustomLeader
+    SLASH_COMMANDS["/beam"] = TestLight
 end
 
 
