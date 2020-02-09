@@ -3,7 +3,8 @@
 ## Version: 1.5.3
 ## Author: @Just_Merlin
 ## Description: Shows location of dead group members to rez them faster.
-## OptionalDependsOn: LibAddonMenu-2.0
+## DependsOn: LibMapPins-1.0 LibMapPing LibGPS LibAddonMenu-2.0 Lib3D
+## OptionalDependsOn: LibAddonMenu-2.0 
 ## SavedVariables: merlinsRezHelperSettings
 
 lib\LibStub\LibStub.lua

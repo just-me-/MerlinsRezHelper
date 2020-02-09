@@ -120,7 +120,13 @@ local function UpdateReticle()
         else
             state.Distance = state.Settings.MinDistance + (state.Settings.MaxDistance - state.Settings.MinDistance) * state.AbsoluteLinear;
         end
-		ShowLight()
+		
+		-- quick n dirty fix for some lib random errors - try catch 
+		if pcall(ShowLight) then
+			-- worked
+		else
+			--d("meh")
+		end
     end
 
     state.Colors:Update(state)
@@ -134,7 +140,7 @@ function CreateLight()
 	lightReference:SetDrawLayer(0)
 	lightReference:SetDrawLevel(0)
 	lightReference.texture = wm:CreateControl("light", lightReference, CT_TEXTURE)
-	lightReference.texture:SetTexture("MerlinsRezHelper/textures/Beam1.dds")
+	lightReference.texture:SetTexture("MerlinsRezHelper/textures/Beam.dds")
 	lightReference:Create3DRenderSpace()
 	lightReference.texture:Create3DRenderSpace()
 	lightReference.texture:Set3DLocalDimensions(1, 256)
@@ -147,12 +153,8 @@ end
 
 function ShowLight()
 	local lib3D = Lib3D
-	if state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true then 
-		local x = state.Leader.X
-		local y = state.Leader.Y
-		local z = state.Leader.Z
-		
-		local worldX, worldZ = lib3D:LocalToWorld(x, y)
+	if (lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then 
+		local worldX, worldZ = lib3D:LocalToWorld(state.Leader.X, state.Leader.Y)
 		local _, height, _ = lib3D:GetCameraRenderSpacePosition()
 		if worldX ~= nil and worldZ ~= nil then
 			worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
@@ -558,10 +560,6 @@ local function OnPluginLoaded(event, addon)
 
     -- SLASH_COMMANDS["/glfake"] = FakeIt
     -- SLASH_COMMANDS["/glset"] = SetCustomLeader
-	SLASH_COMMANDS["/ff"] = CreateLight
-	SLASH_COMMANDS["/fs"] = ShowLight
-	SLASH_COMMANDS["/fh"] = HideLight
-	
 end
 
 
