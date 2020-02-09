@@ -120,7 +120,7 @@ local function UpdateReticle()
         else
             state.Distance = state.Settings.MinDistance + (state.Settings.MaxDistance - state.Settings.MinDistance) * state.AbsoluteLinear;
         end
-		ShowLight(state.Leader.Name)
+		ShowLight()
     end
 
     state.Colors:Update(state)
@@ -145,27 +145,27 @@ function CreateLight()
 	HideLight()
 end
 
-function ShowLight(player)
+function ShowLight()
 	local lib3D = Lib3D
-	d("in")
-	if not player then
-		player = "player"
-	end
-
-	local x, y, z = GetMapPlayerPosition("player")
-	local worldX, worldZ = lib3D:LocalToWorld(x, y)
-	local _, height, _ = lib3D:GetCameraRenderSpacePosition()
-	if worldX ~= nil and worldZ ~= nil then
-		worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ*100)
-	end
-	lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
-	
-	lightReference:SetHidden(false)
+	if state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true then 
+		local x = state.Leader.X
+		local y = state.Leader.Y
+		local z = state.Leader.Z
+		
+		local worldX, worldZ = lib3D:LocalToWorld(x, y)
+		local _, height, _ = lib3D:GetCameraRenderSpacePosition()
+		if worldX ~= nil and worldZ ~= nil then
+			worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
+		end
+		lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
+		
+		lightReference:SetHidden(false)
+	end 
 end
 
 function HideLight()
-	if lightReference then 
-		lightReference:SetHidden(false)
+	if lightReference ~= nil and state.Hidden ~= false then 
+		lightReference:SetHidden(true)
 	end
 end
 
