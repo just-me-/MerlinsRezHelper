@@ -169,9 +169,11 @@ function ShowLight()
 end
 
 function CalcLightPos(x, y)
+	-- Parent Frame
 	local Wx, Wz = Lib3D:GlobalToWorld(Lib3D:GetCurrentWorldOriginAsGlobal())
 	lightReference:Set3DRenderSpaceOrigin(Wx, 0, Wz)
 	
+	-- Beam
 	local worldX, worldZ = nil, nil
 	worldX, worldZ = Lib3D:LocalToWorld(x, y)	
 	local _, height, _ = Lib3D:GetCameraRenderSpacePosition()
@@ -179,6 +181,13 @@ function CalcLightPos(x, y)
 		worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
 	end
 	lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
+	
+	-- Ausrichtung
+	local heading = GetPlayerCameraHeading()
+	if heading > math.pi then 
+		heading = heading - 2 * math.pi
+	end
+	lightReference.texture:Set3DRenderSpaceOrientation(0, heading, 0)
 end
 
 function TTTest()
@@ -194,8 +203,6 @@ function TTTest()
 		--lightReference.texture:Set3DRenderSpaceOrigin(worldX, worldHeight, worldY)
 		--lightReference.texture:Set3DRenderSpaceOrigin(x, height, y)
 	end
-	--d("TTT: xy" .. x .." " .. y)
-	--d("TTT: worldxy" .. worldX .." " .. worldY)
 end
 
 function HideLight()
