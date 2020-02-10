@@ -152,10 +152,9 @@ end
 function TestLight()
 	--TTTest()
 	d("Testing - /reloadui to remove the beam strip. No beam visible? Then this area is not supported yet.")
+	
 	local x, y, z = GetMapPlayerPosition("player")
-	d("Position:"..x.." "..y.." "..z)
 	CalcLightPos(x, y)
-	d(lightReference)
 	lightReference:SetHidden(false)
 	state.ForceBeam = true
 end
@@ -170,13 +169,15 @@ function ShowLight()
 end
 
 function CalcLightPos(x, y)
+	local Wx, Wz = Lib3D:GlobalToWorld(Lib3D:GetCurrentWorldOriginAsGlobal())
+	lightReference:Set3DRenderSpaceOrigin(Wx, 0, Wz)
+	
 	local worldX, worldZ = nil, nil
 	worldX, worldZ = Lib3D:LocalToWorld(x, y)	
 	local _, height, _ = Lib3D:GetCameraRenderSpacePosition()
 	if worldX ~= nil and worldZ ~= nil then
 		worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
 	end
-	d("Position:"..worldX.." "..worldZ.." "..height)
 	lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
 end
 
@@ -190,6 +191,8 @@ function TTTest()
 		if x ~= nil and y ~= nil then
 			x, height, y = WorldPositionToGuiRender3DPosition(x * 100, height, y * 100)
 		end
+		--lightReference.texture:Set3DRenderSpaceOrigin(worldX, worldHeight, worldY)
+		--lightReference.texture:Set3DRenderSpaceOrigin(x, height, y)
 	end
 	--d("TTT: xy" .. x .." " .. y)
 	--d("TTT: worldxy" .. worldX .." " .. worldY)
