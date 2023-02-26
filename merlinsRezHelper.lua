@@ -1,6 +1,6 @@
-local LAM2 = LibStub("LibAddonMenu-2.0")
+local LAM2 = LibAddonMenu2
 local FAKETAG = 'MERLINS_REZHELPER_FAKE'
-local AddonVersion = '2.0.0'
+local AddonVersion = '2.1.0'
 local NextPlayer = ''
 
 local state = {
@@ -121,7 +121,7 @@ local function UpdateReticle()
         else
             state.Distance = state.Settings.MinDistance + (state.Settings.MaxDistance - state.Settings.MinDistance) * state.AbsoluteLinear;
         end
-		
+
 		ShowLight()
     end
 
@@ -131,7 +131,7 @@ end
 
 function CreateLight()
 	if state.Settings.Beam == true then
-		local wm = GetWindowManager() 
+		local wm = GetWindowManager()
 		lightReference = wm:CreateTopLevelWindow("playerPosition")
 		lightReference:SetDrawTier(0)
 		lightReference:SetDrawLayer(0)
@@ -152,7 +152,7 @@ end
 function TestLight()
 	--TTTest()
 	d("Testing - /reloadui to remove the beam strip. No beam visible? Then this area is not supported yet.")
-	
+
 	local x, y, z = GetMapPlayerPosition("player")
 	CalcLightPos(x, y)
 	lightReference:SetHidden(false)
@@ -161,10 +161,10 @@ end
 
 function ShowLight()
 	if state.Settings.Beam == true then
-		if (Lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then 
+		if (Lib3D ~= nil and state.Leader ~= nil and state.Leader.X ~= nil and state.Leader.Y ~= nil and state.Hidden ~= true) then
 			CalcLightPos(state.Leader.X, state.Leader.Y)
 			lightReference:SetHidden(false)
-		end 
+		end
 	end
 end
 
@@ -172,19 +172,19 @@ function CalcLightPos(x, y)
 	-- Parent Frame
 	local Wx, Wz = Lib3D:GlobalToWorld(Lib3D:GetCurrentWorldOriginAsGlobal())
 	lightReference:Set3DRenderSpaceOrigin(Wx, 0, Wz)
-	
+
 	-- Beam
 	local worldX, worldZ = nil, nil
-	worldX, worldZ = Lib3D:LocalToWorld(x, y)	
+	worldX, worldZ = Lib3D:LocalToWorld(x, y)
 	local _, height, _ = Lib3D:GetCameraRenderSpacePosition()
 	if worldX ~= nil and worldZ ~= nil then
 		worldX, _, worldZ = WorldPositionToGuiRender3DPosition(worldX * 100, 0, worldZ * 100)
 	end
 	lightReference.texture:Set3DRenderSpaceOrigin(worldX, height, worldZ)
-	
+
 	-- Ausrichtung
 	local heading = GetPlayerCameraHeading()
-	if heading > math.pi then 
+	if heading > math.pi then
 		heading = heading - 2 * math.pi
 	end
 	lightReference.texture:Set3DRenderSpaceOrientation(0, heading, 0)
@@ -206,7 +206,7 @@ function TTTest()
 end
 
 function HideLight()
-	if lightReference ~= nil and state.Hidden ~= false and state.ForceBeam == false then 
+	if lightReference ~= nil and state.Hidden ~= false and state.ForceBeam == false then
 		lightReference:SetHidden(true)
 	end
 end
